@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌿 Справочник цветовода | Collection</title>
+    <title>🌿 Справочник цветовода | 21vek Collection</title>
     <style>
         :root {
             --bg: #fafaf6;
@@ -18,8 +18,8 @@
             --text-muted: #7a7a7a;
             --border: #e4e4dc;
             --border-light: #f0f0e8;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
             --radius-sm: 6px;
             --radius: 10px;
             --radius-lg: 14px;
@@ -133,6 +133,17 @@
         }
         .form-group select:focus, .form-group input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(74,124,72,0.08); }
         .form-group .hint { font-size:0.75rem; color:var(--text-muted); margin-top:2px; }
+        .checkbox-group {
+            display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0;
+            background: #f9faf7; border-radius: var(--radius); padding: 12px 16px;
+        }
+        .checkbox-group label {
+            display: flex; align-items: center; gap: 6px; font-size: 0.9rem;
+            cursor: pointer; user-select: none;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px; height: 18px; accent-color: var(--primary);
+        }
         .result-box {
             background:var(--primary-light); border:1.5px solid var(--primary); border-radius:var(--radius);
             padding:16px 20px; margin-top:12px;
@@ -176,7 +187,6 @@
     </style>
 </head>
 <body>
-    <!-- HEADER -->
     <header class="header">
         <button class="menu-toggle" id="menuToggle" aria-label="Меню">☰</button>
         <a class="header-logo" onclick="navigateTo('home')">🌿 Справочник цветовода</a>
@@ -242,6 +252,14 @@
                             <input type="text" id="calcPH" value="—" readonly style="background:#f9faf6;">
                         </div>
                     </div>
+                    <div class="checkbox-group" id="fertilizerCheckboxes">
+                        <label><input type="checkbox" id="chkFulvic" checked onchange="updateCalcValues()"> Fulvic Plantix</label>
+                        <label><input type="checkbox" id="chkHB101" checked onchange="updateCalcValues()"> HB-101</label>
+                        <label><input type="checkbox" id="chkCocoA" checked onchange="updateCalcValues()"> Coco A (Plagron)</label>
+                        <label><input type="checkbox" id="chkCocoB" checked onchange="updateCalcValues()"> Coco B (Plagron)</label>
+                        <label><input type="checkbox" id="chkCalmag" checked onchange="updateCalcValues()"> CalMag Simplex</label>
+                        <label><input type="checkbox" id="chkRadifarm" checked onchange="updateCalcValues()"> Радифарм</label>
+                    </div>
                     <div id="calcResults" style="display:none;">
                         <div class="result-box"><h4>Дозировки на <span id="calcVolDisplay">1</span> л</h4><div id="calcDosages"></div></div>
                         <div class="card" style="margin-top:12px;"><div class="card-header">📝 Порядок приготовления</div><ol class="mixing-steps" id="mixingSteps"></ol></div>
@@ -280,6 +298,7 @@
     <button class="scroll-top" id="scrollTop">↑</button>
 
     <script>
+        // ==================== ПОЛНЫЕ ДАННЫЕ ====================
         const plantsData = [
             {
                 id: 'anthurium', name: 'Антуриум', emoji: '🌺', difficulty: 'Средняя', wick: 'Да (умеренно)',
@@ -710,7 +729,7 @@
                     'Листья протирать раз в 2 нед — глянец улучшает фотосинтез.',
                     'Deliciosa vs Thai Constellation: первая растёт быстро при EC 1.3, вторая медленнее, EC 1.0.',
                     'Зимой снизить EC до 0.8 и полив до 1 раза в 10–12 дней.',
-                    'Азотная фаза (Coco A+B 2:2) весной → рост листа. Снизить K/P — не нужно для ароидных.',
+                    'Азотная фаза (Coco A+B 2:2) весной → рост листа.',
                     'Гуттация (капли на листьях) = растение здорово, влажность субстрата высокая. Промокнуть.',
                     'При размножении — укоренять в тёмном непрозрачном стакане с водой и HB-101.',
                     'Большой горшок = больше субстрата = риск залить. Идеально — горшок чуть больше кома корней.',
@@ -787,7 +806,7 @@
             }
         ];
 
-        // Navigation and UI logic (identical to previous but using full data)
+        // ========== ЛОГИКА НАВИГАЦИИ И ПОИСКА ==========
         let currentPage = 'home';
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -810,6 +829,12 @@
         const calcDosages = document.getElementById('calcDosages');
         const calcVolDisplay = document.getElementById('calcVolDisplay');
         const mixingSteps = document.getElementById('mixingSteps');
+        const chkFulvic = document.getElementById('chkFulvic');
+        const chkHB101 = document.getElementById('chkHB101');
+        const chkCocoA = document.getElementById('chkCocoA');
+        const chkCocoB = document.getElementById('chkCocoB');
+        const chkCalmag = document.getElementById('chkCalmag');
+        const chkRadifarm = document.getElementById('chkRadifarm');
 
         function buildPlantNav() {
             plantNav.innerHTML = plantsData.map(p => `<li><a onclick="navigateTo('plant-${p.id}')" data-page="plant-${p.id}"><span class="emoji">${p.emoji}</span> ${p.name}</a></li>`).join('');
@@ -880,7 +905,6 @@
             if (!sel || calcStage.value === '') { calcResults.style.display='none'; calcEmpty.style.display='block'; return; }
             const ppm = parseInt(sel.dataset.ppm)||0;
             const ph = sel.dataset.ph||'—';
-            const ec = sel.dataset.ec||'0';
             const cocoA = parseFloat(sel.dataset.cocoa)||0;
             const cocoB = parseFloat(sel.dataset.cocob)||0;
             const calmag = parseFloat(sel.dataset.calmag)||0;
@@ -895,31 +919,39 @@
             const basePPM = ppm;
             let scale = basePPM>0 ? neededPPM/basePPM : 0;
             if (scale<0) scale=0; if (scale>3) scale=3;
-            const totalFulvic = (0.75*scale*volume);
-            const totalHB101 = (1.5*scale*volume);
+            const useFulvic = chkFulvic.checked;
+            const useHB101 = chkHB101.checked;
+            const useCocoA = chkCocoA.checked;
+            const useCocoB = chkCocoB.checked;
+            const useCalmag = chkCalmag.checked;
+            const useRadifarm = chkRadifarm.checked;
+            const totalFulvic = useFulvic ? (0.75 * scale * volume) : 0;
+            const totalHB101 = useHB101 ? (1.5 * scale * volume) : 0;
+            const totalCocoA = useCocoA ? (cocoA * scale * volume) : 0;
+            const totalCocoB = useCocoB ? (cocoB * scale * volume) : 0;
+            const totalCalmag = useCalmag ? (calmag * scale * volume) : 0;
+            const totalRadifarm = useRadifarm ? (radifarm * scale * volume) : 0;
             calcVolDisplay.textContent = volume;
-            calcDosages.innerHTML = `
-                <div class="result-item"><span>💧 Дистиллят</span><span class="val">${(volume*1000).toFixed(0)} мл</span></div>
-                <div class="result-item"><span>Fulvic Plantix</span><span class="val">${totalFulvic.toFixed(2)} мл</span></div>
-                <div class="result-item"><span>HB-101</span><span class="val">${Math.round(totalHB101)} капель</span></div>
-                <div class="result-item"><span>Coco A</span><span class="val">${(cocoA*scale*volume).toFixed(2)} мл</span></div>
-                <div class="result-item"><span>Coco B</span><span class="val">${(cocoB*scale*volume).toFixed(2)} мл</span></div>
-                <div class="result-item"><span>CalMag</span><span class="val">${(calmag*scale*volume).toFixed(2)} мл</span></div>
-                ${radifarm>0?`<div class="result-item"><span>Радифарм</span><span class="val">${(radifarm*scale*volume).toFixed(2)} мл</span></div>`:''}
-                <div class="result-item"><span>pH-корректор</span><span class="val">по необходимости</span></div>
-            `;
-            mixingSteps.innerHTML = `
-                <li>Налейте ${(volume*1000).toFixed(0)} мл дистиллята (PPM:${sourcePPM}).</li>
-                <li>Добавьте ${totalFulvic.toFixed(2)} мл Fulvic Plantix. Перемешайте.</li>
-                <li>Добавьте ${Math.round(totalHB101)} капель HB-101. Перемешайте.</li>
-                <li>Добавьте ${(cocoA*scale*volume).toFixed(2)} мл Coco A. Перемешайте.</li>
-                <li>Добавьте ${(cocoB*scale*volume).toFixed(2)} мл Coco B. Никогда не смешивайте A и B напрямую! Перемешайте.</li>
-                <li>Добавьте ${(calmag*scale*volume).toFixed(2)} мл CalMag. Перемешайте.</li>
-                ${radifarm>0?`<li>Добавьте ${(radifarm*scale*volume).toFixed(2)} мл Радифарм. Перемешайте.</li>`:''}
-                <li>Проверьте pH, доведите до ${ph}.</li>
-                <li>✅ Готово! ${note}</li>
-            `;
-            calcResults.style.display='block'; calcEmpty.style.display='none';
+            let html = '';
+            if (totalFulvic > 0) html += `<div class="result-item"><span>Fulvic Plantix</span><span class="val">${totalFulvic.toFixed(2)} мл</span></div>`;
+            if (totalHB101 > 0) html += `<div class="result-item"><span>HB-101</span><span class="val">${Math.round(totalHB101)} капель</span></div>`;
+            if (totalCocoA > 0) html += `<div class="result-item"><span>Coco A</span><span class="val">${totalCocoA.toFixed(2)} мл</span></div>`;
+            if (totalCocoB > 0) html += `<div class="result-item"><span>Coco B</span><span class="val">${totalCocoB.toFixed(2)} мл</span></div>`;
+            if (totalCalmag > 0) html += `<div class="result-item"><span>CalMag</span><span class="val">${totalCalmag.toFixed(2)} мл</span></div>`;
+            if (totalRadifarm > 0) html += `<div class="result-item"><span>Радифарм</span><span class="val">${totalRadifarm.toFixed(2)} мл</span></div>`;
+            if (html === '') html = '<div class="result-item">Все компоненты исключены</div>';
+            calcDosages.innerHTML = html;
+            let steps = '';
+            if (useFulvic) steps += `<li>Добавьте ${totalFulvic.toFixed(2)} мл Fulvic Plantix. Перемешайте.</li>`;
+            if (useHB101) steps += `<li>Добавьте ${Math.round(totalHB101)} капель HB-101. Перемешайте.</li>`;
+            if (useCocoA) steps += `<li>Добавьте ${totalCocoA.toFixed(2)} мл Coco A. Перемешайте.</li>`;
+            if (useCocoB) steps += `<li>Добавьте ${totalCocoB.toFixed(2)} мл Coco B. Никогда не смешивайте A и B напрямую! Перемешайте.</li>`;
+            if (useCalmag) steps += `<li>Добавьте ${totalCalmag.toFixed(2)} мл CalMag Simplex. Перемешайте.</li>`;
+            if (useRadifarm) steps += `<li>Добавьте ${totalRadifarm.toFixed(2)} мл Радифарм. Перемешайте.</li>`;
+            steps += `<li>Проверьте pH, доведите до ${ph}.</li>`;
+            steps += `<li>✅ Готово! ${note}</li>`;
+            mixingSteps.innerHTML = steps;
+            calcResults.style.display = 'block'; calcEmpty.style.display = 'none';
         }
 
         function buildSearchIndex() {
