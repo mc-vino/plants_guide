@@ -1,1 +1,1662 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Справочник цветовода | 21vek Collection</title>
+    <meta name="description" content="Полный справочник по уходу за комнатными растениями с калькулятором приготовления питательного раствора.">
+    <style>
+        :root {
+            --bg: #fafaf6;
+            --card-bg: #ffffff;
+            --primary: #4a7c48;
+            --primary-light: #e8f2e6;
+            --primary-dark: #3a5f38;
+            --accent: #c59b5f;
+            --accent-light: #fdf3e4;
+            --text: #2c2c2c;
+            --text-light: #5a5a5a;
+            --text-muted: #7a7a7a;
+            --border: #e4e4dc;
+            --border-light: #f0f0e8;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.10);
+            --radius-sm: 6px;
+            --radius: 10px;
+            --radius-lg: 14px;
+            --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-heading: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --sidebar-w: 280px;
+            --header-h: 60px;
+            --transition: 0.2s ease;
+            --danger: #c0392b;
+            --danger-light: #fdecea;
+            --warning: #e67e22;
+            --warning-light: #fef5ec;
+            --info: #2980b9;
+            --info-light: #eaf4fb;
+            --success: #27ae60;
+            --success-light: #eafaf1;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* HEADER */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            height: var(--header-h);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        .header-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .header-logo .icon {
+            font-size: 1.6rem;
+        }
+        .header-search-wrap {
+            flex: 1;
+            max-width: 500px;
+            position: relative;
+        }
+        .header-search {
+            width: 100%;
+            padding: 10px 16px 10px 42px;
+            border: 1.5px solid var(--border);
+            border-radius: 30px;
+            font-size: 0.95rem;
+            background: var(--bg);
+            color: var(--text);
+            transition: var(--transition);
+            outline: none;
+        }
+        .header-search:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 124, 72, 0.1);
+            background: #fff;
+        }
+        .header-search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 200;
+            margin-top: 4px;
+        }
+        .search-results-dropdown.active {
+            display: block;
+        }
+        .search-result-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+        .search-result-item:hover {
+            background: var(--primary-light);
+        }
+        .search-result-item .highlight {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        .search-result-item .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .no-results {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-outline {
+            background: #fff;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            border-radius: 15px;
+        }
+
+        /* MENU TOGGLE */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: var(--text);
+            padding: 4px;
+            line-height: 1;
+        }
+
+        /* SIDEBAR OVERLAY */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 150;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* MAIN LAYOUT */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-w);
+            min-width: var(--sidebar-w);
+            background: #fff;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 16px 0;
+            position: sticky;
+            top: var(--header-h);
+            height: calc(100vh - var(--header-h));
+            z-index: 50;
+            transition: var(--transition);
+        }
+        .sidebar-nav {
+            list-style: none;
+            padding: 0 12px;
+        }
+        .sidebar-nav li {
+            margin: 2px 0;
+        }
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.93rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .sidebar-nav a:hover {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        .sidebar-nav a.active {
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar-nav .emoji {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .sidebar-section-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            padding: 16px 14px 6px;
+            font-weight: 700;
+        }
+        .sidebar-divider {
+            border: none;
+            border-top: 1px solid var(--border-light);
+            margin: 8px 14px;
+        }
+
+        /* CONTENT */
+        .content {
+            flex: 1;
+            padding: 24px 28px;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            overflow-y: auto;
+            height: calc(100vh - var(--header-h));
+            position: sticky;
+            top: var(--header-h);
+        }
+        .page {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+        .card-header {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-subheader {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin: 12px 0 6px;
+            color: var(--text);
+        }
+
+        /* TABLES */
+        .table-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 8px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 600px;
+        }
+        table th,
+        table td {
+            padding: 8px 10px;
+            border: 1px solid var(--border-light);
+            text-align: left;
+            vertical-align: top;
+        }
+        table th {
+            background: var(--primary-light);
+            font-weight: 600;
+            color: var(--primary-dark);
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+        }
+        table tr:nth-child(even) td {
+            background: #fdfdfb;
+        }
+        table tr:hover td {
+            background: #f9faf6;
+        }
+        .table-caption {
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        /* TAGS / BADGES */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-green {
+            background: var(--success-light);
+            color: var(--success);
+        }
+        .badge-orange {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+        .badge-red {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+        .badge-blue {
+            background: var(--info-light);
+            color: var(--info);
+        }
+        .badge-accent {
+            background: var(--accent-light);
+            color: #8b6914;
+        }
+
+        /* CALCULATOR */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        .calc-full {
+            grid-column: 1 / -1;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            color: var(--text-light);
+        }
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            background: #fff;
+            color: var(--text);
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 124, 72, 0.08);
+        }
+        .form-group .hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .result-box {
+            background: var(--primary-light);
+            border: 1.5px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 16px 20px;
+            margin-top: 12px;
+        }
+        .result-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dotted var(--border);
+            font-size: 0.9rem;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .result-item .val {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        .mixing-steps {
+            list-style: none;
+            counter-reset: step;
+            padding: 0;
+        }
+        .mixing-steps li {
+            counter-increment: step;
+            padding: 10px 14px 10px 44px;
+            position: relative;
+            margin: 6px 0;
+            background: #fff;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-light);
+            font-size: 0.9rem;
+        }
+        .mixing-steps li::before {
+            content: counter(step);
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 26px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+        .highlight-val {
+            font-weight: 700;
+            color: var(--primary-dark);
+            background: var(--primary-light);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* INFO BLOCKS */
+        .info-block {
+            background: var(--info-light);
+            border-left: 4px solid var(--info);
+            padding: 12px 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .warning-block {
+            background: var(--warning-light);
+            border-left: 4px solid var(--warning);
+            padding: 12px 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+        .danger-block {
+            background: var(--danger-light);
+            border-left: 4px solid var(--danger);
+            padding: 12px 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border-light);
+            padding-bottom: 0;
+        }
+        .tab-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .tab-btn:hover {
+            color: var(--primary-dark);
+            background: var(--primary-light);
+        }
+        .tab-btn.active {
+            color: var(--primary-dark);
+            background: var(--primary-light);
+            font-weight: 700;
+            border-bottom: 3px solid var(--primary);
+            margin-bottom: -2px;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* QUICK REFERENCE GRID */
+        .quick-ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+        .quick-ref-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+        .quick-ref-card:hover {
+            box-shadow: var(--shadow);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .quick-ref-card .plant-emoji {
+            font-size: 2.5rem;
+        }
+        .quick-ref-card h3 {
+            margin: 6px 0 4px;
+            font-size: 1rem;
+            color: var(--primary-dark);
+        }
+        .quick-ref-card p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        /* SCROLL TO TOP */
+        .scroll-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            z-index: 60;
+            display: none;
+            transition: var(--transition);
+        }
+        .scroll-top:hover {
+            background: var(--primary-dark);
+        }
+        .scroll-top.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: var(--header-h);
+                height: calc(100vh - var(--header-h));
+                z-index: 160;
+                transition: left 0.3s ease;
+                box-shadow: var(--shadow-lg);
+                width: 280px;
+                min-width: 280px;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .content {
+                padding: 16px;
+                height: auto;
+                position: relative;
+                top: auto;
+                max-width: 100%;
+            }
+            .calc-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .header-search-wrap {
+                max-width: 300px;
+            }
+            .quick-ref-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            table {
+                font-size: 0.75rem;
+                min-width: 450px;
+            }
+            .header {
+                padding: 0 12px;
+                gap: 8px;
+            }
+            .header-logo {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 500px) {
+            .header-search-wrap {
+                max-width: 180px;
+            }
+            .header-logo {
+                font-size: 0.85rem;
+            }
+            .header-logo .icon {
+                font-size: 1.3rem;
+            }
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.78rem;
+            }
+            .content {
+                padding: 10px;
+            }
+            .card {
+                padding: 14px 16px;
+            }
+            .quick-ref-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .quick-ref-card {
+                padding: 10px;
+            }
+            .quick-ref-card .plant-emoji {
+                font-size: 1.8rem;
+            }
+            .quick-ref-card h3 {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <button class="menu-toggle" id="menuToggle" aria-label="Меню">☰</button>
+        <a class="header-logo" onclick="navigateTo('home')" title="На главную">
+            <span class="icon">🌿</span> Справочник цветовода
+        </a>
+        <div class="header-search-wrap">
+            <span class="header-search-icon">🔍</span>
+            <input type="text" class="header-search" id="searchInput" placeholder="Поиск по растениям, проблемам, советам..."
+            autocomplete="off">
+            <div class="search-results-dropdown" id="searchDropdown"></div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-primary btn-sm" onclick="navigateTo('calculator')">🧪 Калькулятор</button>
+        </div>
+    </header>
+
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <nav>
+                <ul class="sidebar-nav">
+                    <li><a onclick="navigateTo('home')" class="active" data-page="home"><span class="emoji">🏠</span> Главная</a></li>
+                    <li><a onclick="navigateTo('calculator')" data-page="calculator"><span class="emoji">🧪</span> Калькулятор раствора</a></li>
+                    <li><a onclick="navigateTo('quickref')" data-page="quickref"><span class="emoji">💊</span> Быстрый справочник PPM/pH</a></li>
+                </ul>
+                <hr class="sidebar-divider">
+                <div class="sidebar-section-title">🌱 Растения</div>
+                <ul class="sidebar-nav" id="plantNav">
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- CONTENT -->
+        <main class="content" id="mainContent">
+            <!-- HOME PAGE -->
+            <div class="page active" id="page-home">
+                <div class="card">
+                    <h2>🌿 Добро пожаловать в справочник цветовода</h2>
+                    <p style="color:var(--text-light);margin:8px 0;">
+                        <strong>Коллекция 21vek</strong> • Кокос + Дистиллят + Досветка<br>
+                        Удобрения: CalMag Simplex | Coco A+B Plagron | Fulvic Plantix | HB-101 | Радифарм
+                    </p>
+                    <p style="color:var(--text-muted);font-size:0.85rem;">
+                        Вода: Дистиллят (0–10 ppm) • Выберите растение ниже или воспользуйтесь поиском 🔍
+                    </p>
+                </div>
+                <div class="quick-ref-grid" id="plantCardsGrid"></div>
+            </div>
+
+            <!-- CALCULATOR PAGE -->
+            <div class="page" id="page-calculator">
+                <div class="card">
+                    <div class="card-header">🧪 Калькулятор приготовления питательного раствора</div>
+                    <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:12px;">
+                        Выберите растение и этап развития — калькулятор покажет точные дозировки и порядок смешивания.
+                    </p>
+                    <div class="calc-grid">
+                        <div class="form-group">
+                            <label>🌱 Растение</label>
+                            <select id="calcPlant" onchange="updateCalcStages()">
+                                <option value="">-- Выберите растение --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>📊 Этап развития</label>
+                            <select id="calcStage" onchange="updateCalcValues()">
+                                <option value="">-- Сначала выберите растение --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>💧 Исходный PPM воды (ваша вода)</label>
+                            <input type="number" id="calcSourcePPM" value="0" min="0" max="500" step="1" onchange="updateCalcValues()">
+                            <span class="hint">Для дистиллята: 0–10 ppm. Для водопроводной: обычно 100–400 ppm.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>🎯 Целевой PPM (500 scale)</label>
+                            <input type="number" id="calcTargetPPM" value="0" min="0" max="2000" step="10" onchange="updateCalcValues()">
+                            <span class="hint">Автозаполняется из таблицы. Можно корректировать.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>🧴 Объём готового раствора (литры)</label>
+                            <input type="number" id="calcVolume" value="1" min="0.1" max="100" step="0.1" onchange="updateCalcValues()">
+                            <span class="hint">Сколько литров раствора вам нужно приготовить.</span>
+                        </div>
+                        <div class="form-group">
+                            <label>📋 Рекомендованный pH</label>
+                            <input type="text" id="calcPH" value="—" readonly style="background:#f9faf6;">
+                        </div>
+                    </div>
+                    <div id="calcResults" style="display:none;">
+                        <div class="result-box">
+                            <h4>📋 Дозировки на <span id="calcVolDisplay">1</span> л раствора</h4>
+                            <div id="calcDosages"></div>
+                        </div>
+                        <div class="card" style="margin-top:12px;">
+                            <div class="card-header">📝 Порядок приготовления раствора</div>
+                            <ol class="mixing-steps" id="mixingSteps"></ol>
+                        </div>
+                        <div class="info-block">
+                            ⚠️ <strong>Важно:</strong> Всегда добавляйте компоненты в указанном порядке. Перемешивайте после каждого добавления. pH корректируйте в самом конце. Никогда не смешивайте Coco A и Coco B напрямую друг с другом!
+                        </div>
+                    </div>
+                    <div id="calcEmpty" class="info-block">
+                        👆 Выберите растение и этап развития, чтобы увидеть расчёт дозировок.
+                    </div>
+                </div>
+            </div>
+
+            <!-- QUICK REF PAGE -->
+            <div class="page" id="page-quickref">
+                <div class="card">
+                    <div class="card-header">💊 Быстрый справочник: ориентиры PPM и pH для дистиллята</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Этап</th><th>PPM (500 scale)</th><th>pH</th><th>EC</th><th>Примечание</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Базовый дистиллят</td><td>0–10 ppm</td><td>~6.5–7.0</td><td>—</td><td>До внесения удобрений</td></tr>
+                                <tr><td>Черенкование/клубень</td><td>150–200</td><td>5.8–6.5</td><td>0.3–0.4 мСм/см</td><td>Радифарм в каждый полив</td></tr>
+                                <tr><td>Молодое растение</td><td>300–400</td><td>5.8–6.5</td><td>0.6–0.8 мСм/см</td><td></td></tr>
+                                <tr><td>Активный рост</td><td>500–650</td><td>5.8–6.3</td><td>1.0–1.3 мСм/см</td><td>Промывка раз в 4–6 нед</td></tr>
+                                <tr><td>Взрослое/цветение</td><td>650–800</td><td>5.8–6.5</td><td>1.3–1.6 мСм/см</td><td>Контроль засоления</td></tr>
+                                <tr><td>Хойя (все этапы)</td><td>150–500</td><td>6.0–6.5</td><td>0.3–1.0 мСм/см</td><td>Засухоустойчива</td></tr>
+                                <tr><td>Каладиум (покой)</td><td>0</td><td>—</td><td>—</td><td>15–18°C, сухой клубень</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">🎨 Легенда цветовой маркировки этапов</div>
+                    <table style="min-width:auto;">
+                        <tbody>
+                            <tr><td><span class="badge badge-blue">Этап 1</span></td><td>Черенок / Клубень / Клон (укоренение)</td></tr>
+                            <tr><td><span class="badge badge-green">Этап 2</span></td><td>Молодое растение (первые 1–4 мес после укоренения)</td></tr>
+                            <tr><td><span class="badge badge-accent">Этап 3</span></td><td>Активный рост</td></tr>
+                            <tr><td><span class="badge badge-orange">Этап 4</span></td><td>Взрослое растение / Цветение / Покой</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- PLANT PAGES (dynamically generated) -->
+            <div id="plantPagesContainer"></div>
+        </main>
+    </div>
+
+    <!-- SCROLL TO TOP -->
+    <button class="scroll-top" id="scrollTop" title="Наверх">↑</button>
+
+    <script>
+        // ==================== DATA ====================
+        const plantsData = [{
+            id: 'anthurium',
+            name: 'Антуриум',
+            emoji: '🌺',
+            difficulty: 'Средняя',
+            wick: 'Да (умеренно)',
+            family: 'Araceae. Эпифиты и наземные. Родина — тропики Центр. и Южн. Америки.',
+            toxicity: 'ВСЕ части токсичны (оксалат кальция). Держать вне досягаемости детей и животных.',
+            temp: 'Оптимум 22–28°C. Не ниже 16°C. Без резких перепадов.',
+            humidity: 'Мин. 60%. Оптимум 65–75%. Увлажнитель обязателен.',
+            light: '150–300 мкмоль/м²/с. Световой день 14–16 ч. Без прямого солнца.',
+            substrate: 'Кокос буферизованный + 20% перлит + 10% сфагнум. Хорошая аэрация корней.',
+            repot: 'Каждые 1.5–2 года весной. Горшок +2–3 см. Не заглублять шейку.',
+            feature: 'Кожистые листья, плотные. Нюх к бактериозу — берегите срезы.',
+            flowering: 'Початок + покрывало (спата). Длится 2–3 мес. Требует стресс сухостью.',
+            tip: 'Протирайте листья раз в 2 нед. Глянцевые листья = активный фотосинтез.',
+            stages: [
+                { name: 'Черенок/отсадок (0–4 нед)', ec: 0.4, ppm: 200, ph: '5.8–6.2', cocoA: 0.5, cocoB: 0.5,
+                    calmag: 0.5, radifarm: 1, freq: 'По просыханию верхнего слоя (~50%)',
+                note: 'Лёгкое мощение. Радифарм каждый полив. Фитиль только в перлите/вермикулите.' },
+                { name: 'Молодое растение (1–3 мес)', ec: 0.8, ppm: 400, ph: '5.8–6.2', cocoA: 1, cocoB: 1,
+                    calmag: 0.8, radifarm: 0.5, freq: 'Раз в 3–5 дней, 50–60% влажность',
+                    note: 'Увеличить EC постепенно. Следить за ожогами краёв.' },
+                { name: 'Активный рост (3–12 мес)', ec: 1.2, ppm: 600, ph: '5.8–6.2', cocoA: 1.5, cocoB: 1.5,
+                    calmag: 1, radifarm: 0.3, freq: 'Раз в 4–6 дней, 50–60%',
+                    note: 'Полный пролив 20% дренажа. Чередовать со стимуляторами.' },
+                { name: 'Взрослое/цветение (12+ мес)', ec: 1.4, ppm: 700, ph: '5.8–6.2', cocoA: 2, cocoB: 2,
+                    calmag: 1, radifarm: 0, freq: 'Раз в 5–7 дней, 40–55%',
+                    note: 'Небольшой стресс сухостью стимулирует цветение. Фитиль нежелателен.' },
+            ],
+            problems: [
+                { issue: 'Пожелтение нижних листьев',
+                    solution: 'Норма старения ИЛИ избыток воды. Проверить дренаж. Снизить полив.' },
+                { issue: 'Коричневые края/кончики листьев',
+                    solution: 'Низкая влажность воздуха (<50%), избыток соли или фторида. Промыть субстрат, повысить влажность.' },
+                { issue: 'Не цветёт',
+                    solution: 'Мало света или низкая температура ночью. Обеспечить 12–14 ч фитолампы, 18–20°C ночью.' },
+                { issue: 'Гниль корней',
+                solution: 'Переувлажнение + плотный субстрат. Пересадить, обрезать гниль, обработать Триходерма.' },
+                { issue: 'Трипсы (серебристые штрихи)',
+                    solution: 'Регулярный осмотр. Актара системно + Фитоверм контактно. 3 обработки с интервалом 5 дней.' },
+            ],
+            tips: [
+                'Добавляйте сфагнум (10–15%) в кокосовый субстрат — стабилизирует влагу и pH.',
+                'Фитолампа 16 ч/день → цветение круглый год. При 12 ч — только зимой.',
+                'PPFD 150–250 мкмоль — идеал. Больше 400 — риск ожога.',
+                'Опрыскивание воздушных корней тёплой водой ускоряет рост в 2 раза.',
+                'Раз в месяц полив с Радифармом (1 мл/л) — корневая система взрывного роста.',
+            ],
+        }, {
+            id: 'alocasia',
+            name: 'Алоказия',
+            emoji: '🍃',
+            difficulty: 'Выше средней',
+            wick: 'Нет',
+            family: 'Araceae. Клубневые и корневищные. Родина — Юго-Восточная Азия.',
+            toxicity: 'Высокая. Оксалат кальция во всех частях. Перчатки при работе.',
+            temp: 'Оптимум 24–28°C. Покой при 18–20°C. Клубень не ниже 15°C.',
+            humidity: 'Критична! 70%+. При 50% и ниже — коричневые края и потеря листьев.',
+            light: '200–400 мкмоль/м²/с. Вариегатные — 300–500. Без прямого солнца.',
+            substrate: 'Лёгкий: кокос 60% + перлит 30% + вермикулит 10%. Отличный дренаж.',
+            repot: 'Весной, раз в 1–2 года. Горшок +3–4 см от клубня.',
+            feature: 'Ярко выраженный полупокой осенью-зимой. Сбрасывает листья — это норма.',
+            flowering: '—',
+            tip: 'Zebrina, Frydek, Macrorrhiza Variegata — требуют 30–50% больше света.',
+            stages: [
+                { name: 'Клубень/проращивание (0–3 нед)', ec: 0.3, ppm: 150, ph: '5.5–6.0', cocoA: 0.3, cocoB: 0.3,
+                    calmag: 0.5, radifarm: 1, freq: 'Лёгкое поддержание влаги 70–80%',
+                    note: 'Клубень заглубить на 2–3 см. Тепло 25–28°C критично. Фитиль — риск гнили.' },
+                { name: 'Росток до 3 листьев (1–2 мес)', ec: 0.6, ppm: 300, ph: '5.5–6.0', cocoA: 0.8, cocoB: 0.8,
+                    calmag: 0.7, radifarm: 0.7, freq: 'Раз в 2–3 дня, 65–75%',
+                note: 'Влажность воздуха 70%+. Лёгкий субстрат обязателен.' },
+                { name: 'Активный рост (2–8 мес)', ec: 1.1, ppm: 550, ph: '5.5–6.0', cocoA: 1.5, cocoB: 1.5,
+                    calmag: 1, radifarm: 0.3, freq: 'Раз в 3–5 дней, 55–65%',
+                    note: 'Чувствительна к солям — промывать субстрат раз в мес.' },
+                { name: 'Взрослое растение (8+ мес)', ec: 1.3, ppm: 650, ph: '5.5–6.0', cocoA: 2, cocoB: 2,
+                    calmag: 1, radifarm: 0, freq: 'Раз в 5–7 дней, 50–60%',
+                note: 'Зимой снизить EC до 0.8. Фитиль противопоказан.' },
+            ],
+            problems: [
+                { issue: 'Листья желтеют и опадают осенью',
+                    solution: 'Нормальный полупокой. Сократить полив, не тревожить клубень.' },
+                { issue: 'Гниль клубня',
+                solution: 'Переувлажнение при низкой температуре (<20°C). Пересадить, убрать гниль, теплее.' },
+                { issue: 'Коричневые края', solution: 'Сухой воздух. Увлажнитель или поддон с керамзитом.' },
+                { issue: 'Трипсы', solution: 'Алоказии особенно уязвимы. Профилактика Актарой раз в 3 нед.' },
+            ],
+            tips: [
+                'Температура субстрата >22°C — критична для алоказий. Используйте коврик подогрева.',
+                'При пробуждении клубня — минимум воды, максимум тепла и влажности воздуха.',
+                'Промывка кокоса каждые 4 нед — алоказии чувствительны к накоплению солей.',
+                'Влажность воздуха 70%+ = здоровые крупные листья. Используйте увлажнитель.',
+            ],
+        }, {
+            id: 'syngonium',
+            name: 'Сингониум',
+            emoji: '🍀',
+            difficulty: 'Лёгкая',
+            wick: 'Да (отлично)',
+            family: 'Araceae. Лазающие эпифиты. Родина — Центр. и Южн. Америка.',
+            toxicity: 'Умеренная. Оксалат кальция. Не опасно при соблюдении гигиены.',
+            temp: 'Оптимум 20–28°C. Без морозов и сквозняков.',
+            humidity: '55–70%. Нетребователен, но при 70% — крупнее листья.',
+            light: '100–300 мкмоль/м²/с. Вариегатные — 200–350. Тени не боится.',
+            substrate: 'Стандартный кокос + 20–25% перлита. Хорошо работает с фитилём.',
+            repot: 'Активно растущие — раз в год. Корни быстро осваивают горшок.',
+            feature: 'Меняет форму листьев с возрастом: стреловидные → лопастные → пальчатые.',
+            flowering: '—',
+            tip: 'Идеален для начинающих и для отработки системы фитильного полива.',
+            stages: [
+                { name: 'Черенок (0–3 нед)', ec: 0.4, ppm: 200, ph: '5.8–6.5', cocoA: 0.5, cocoB: 0.5, calmag: 0.5,
+                    radifarm: 1, freq: 'Высокая влажность, верхний слой влажный 60–70%',
+                    note: 'Лёгкий укореняется быстро. Фитиль отлично работает с кокосом.' },
+                { name: 'Молодое (1–4 мес)', ec: 0.7, ppm: 350, ph: '5.8–6.5', cocoA: 1, cocoB: 1, calmag: 0.7,
+                    radifarm: 0.5, freq: 'Раз в 3–4 дня, 55–65%', note: 'Неприхотлив. Хорошо реагирует на HB-101.' },
+                { name: 'Активный рост (4–12 мес)', ec: 1, ppm: 500, ph: '5.8–6.5', cocoA: 1.5, cocoB: 1.5,
+                    calmag: 1, radifarm: 0, freq: 'Раз в 4–5 дней, 50–60%',
+                    note: 'Быстрорастущий — можно EC до 1.2 при хорошем росте.' },
+                { name: 'Взрослое (12+ мес)', ec: 1.2, ppm: 600, ph: '5.8–6.5', cocoA: 2, cocoB: 2, calmag: 1,
+                    radifarm: 0, freq: 'Раз в 5–7 дней, 45–55%', note: 'Фитиль работает хорошо у взрослых тоже.' },
+            ],
+            problems: [
+                { issue: 'Пожелтение листьев',
+                    solution: 'Перелив или нехватка N. Проверить влажность, скорректировать EC.' },
+                { issue: 'Листья мельчают', solution: 'Мало света. Добавить фитолампу.' },
+                { issue: 'Потеря пестроты',
+                    solution: 'Недостаток света у вариегатных форм. Увеличить световой день.' },
+            ],
+            tips: [
+                'Один из самых неприхотливых ароидных — идеален для отработки техники полива.',
+                'На фитиле в кокосе растёт отлично — фитиль 8–10 мм для горшка 12–15 см.',
+                'Вариегатные сингониумы требуют PPFD 200–350 мкмоль — иначе теряют пестроту.',
+                'Прищипка точки роста → кустистость. Делайте это на 4–5 листе.',
+            ],
+        }, {
+            id: 'philodendron',
+            name: 'Филодендрон',
+            emoji: '🌿',
+            difficulty: 'Средняя',
+            wick: 'Да (умеренно)',
+            family: 'Araceae. Лазающие и ползучие эпифиты. Родина — тропики Америки.',
+            toxicity: 'Умеренная. Оксалат кальция. Перчатки при обрезке.',
+            temp: 'Оптимум 22–28°C. Ночью не ниже 18°C.',
+            humidity: '60–80%. При 80% — листья максимального размера.',
+            light: '200–400 мкмоль/м²/с. Лазающие — 300+. 14–16 ч/день.',
+            substrate: 'Кокос + 20–30% перлита + 10% сфагнума. Воздушные корни любят мох.',
+            repot: 'Каждые 1.5–2 года. У лазающих — с опорой в горшке.',
+            feature: 'Воздушные корни — орган питания! Направляйте их в субстрат.',
+            flowering: '—',
+            tip: 'Самый отзывчивый на биостимуляторы из ароидных. HB-101 + Fulvic = синергия.',
+            stages: [
+                { name: 'Черенок/отводок (0–4 нед)', ec: 0.4, ppm: 200, ph: '5.8–6.3', cocoA: 0.5, cocoB: 0.5,
+                    calmag: 0.5, radifarm: 1, freq: 'Влажный кокос 60–70%, не мокрый',
+                    note: 'Воздушные корни — не повреждать. Радифарм каждый полив.' },
+                { name: 'Молодое (1–4 мес)', ec: 0.8, ppm: 400, ph: '5.8–6.3', cocoA: 1, cocoB: 1, calmag: 0.8,
+                    radifarm: 0.5, freq: 'Раз в 3–4 дня, 55–65%',
+                note: 'Карабкающиеся виды — поставить опору сразу.' },
+                { name: 'Активный рост (4–18 мес)', ec: 1.2, ppm: 600, ph: '5.8–6.3', cocoA: 1.8, cocoB: 1.8,
+                    calmag: 1, radifarm: 0.3, freq: 'Раз в 4–6 дней, 50–60%',
+                    note: 'Самые отзывчивые на фульвокислоты среди ароидных.' },
+                { name: 'Взрослое (18+ мес)', ec: 1.5, ppm: 750, ph: '5.8–6.3', cocoA: 2.5, cocoB: 2.5,
+                    calmag: 1, radifarm: 0, freq: 'Раз в 5–7 дней, 45–55%',
+                    note: 'Крупные виды (gloriosum, melanochrysum) — EC до 1.8.' },
+            ],
+            problems: [
+                { issue: 'Жёлтые листья', solution: 'Перелив чаще всего. Дать просохнуть 50%, проверить дренаж.' },
+                { issue: 'Коричневые пятна с жёлтым краем',
+                    solution: 'Бактериоз. Медьсодержащий фунгицид + вентиляция.' },
+                { issue: 'Листья мельчают/нет фенестрации',
+                    solution: 'Мало света или N. Добавить свет + поднять EC.' },
+            ],
+            tips: [
+                'Воздушные корни — не обрезать! Направить в мокрый мох или в субстрат.',
+                'Лучший отклик на фульвокислоты из всех ароидных — Fulvic Plantix каждый полив.',
+                'Опора из мха кокопит + регулярное увлажнение = листья +30–50% к размеру.',
+                'PPFD 200–400 для крупнолистных видов. Melanochrysum, gloriosum — 300+.',
+            ],
+        }, {
+            id: 'spathiphyllum',
+            name: 'Спатифиллум',
+            emoji: '🤍',
+            difficulty: 'Лёгкая',
+            wick: 'Да (отлично)',
+            family: 'Araceae. Наземные. Родина — тропики Америки и Азии.',
+            toxicity: 'Умеренная. Оксалат кальция. Перчатки при работе с соком.',
+            temp: 'Оптимум 20–26°C. Мин. 15°C.',
+            humidity: '55–70%. Кончики буреют при <50%.',
+            light: '100–250 мкмоль/м²/с. Один из немногих цветущих ароидных при низком свете.',
+            substrate: 'Стандартный кокос + 15–20% перлит. Любит влагу, но без застоя.',
+            repot: 'Раз в 2 года или при вылезании корней из дренажа.',
+            feature: 'Тесный горшок стимулирует цветение. Не спешите пересаживать!',
+            flowering: 'Белый початок. До 2–3 раз в год при правильном уходе.',
+            tip: 'Лучший индикатор влажности — поникание листьев. Поливайте до этого.',
+            stages: [
+                { name: 'Деление/черенок (0–3 нед)', ec: 0.4, ppm: 200, ph: '6.0–6.5', cocoA: 0.5, cocoB: 0.5,
+                    calmag: 0.5, radifarm: 1, freq: 'Постоянно влажный, 70–80%',
+                    note: 'Любит влагу. Фитиль идеален. Не допускать пересыхания.' },
+                { name: 'Молодое (1–3 мес)', ec: 0.8, ppm: 400, ph: '6.0–6.5', cocoA: 1, cocoB: 1, calmag: 0.8,
+                    radifarm: 0.5, freq: 'Раз в 2–3 дня, 65–75%', note: 'Хорошо переносит нижний полив.' },
+                { name: 'Активный рост (3–12 мес)', ec: 1.2, ppm: 600, ph: '6.0–6.5', cocoA: 1.5, cocoB: 1.5,
+                    calmag: 1, radifarm: 0.3, freq: 'Раз в 3–5 дней, 60–70%',
+                    note: 'При низкой влажности коричневеют кончики.' },
+                { name: 'Взрослое/цветение (12+ мес)', ec: 1.4, ppm: 700, ph: '6.0–6.5', cocoA: 2, cocoB: 2,
+                    calmag: 1, radifarm: 0, freq: 'Раз в 4–6 дней, 55–65%',
+                note: 'Фитиль работает отлично даже у взрослых.' },
+            ],
+            problems: [
+                { issue: 'Коричневые кончики',
+                    solution: 'Сухой воздух (<50%) или фтор в воде. Дистиллят + увлажнитель.' },
+                { issue: 'Пожелтение листьев', solution: 'Прямой свет или перелив. Притенить, проверить корни.' },
+                { issue: 'Не цветёт',
+                    solution: 'Мало света или горшок слишком большой. Теснота стимулирует цвет.' },
+            ],
+            tips: [
+                'Фитиль идеален — постоянная умеренная влажность без риска залить.',
+                'Горшок "в обтяжку" (корни видны) = лучшее цветение. Не пересаживайте без нужды.',
+                'Фторид воды — главный враг. Дистиллят и кончики не буреют.',
+                'Обрезка отцветших соцветий у основания — стимулирует следующий цикл.',
+            ],
+        }, {
+            id: 'hoya',
+            name: 'Хойя',
+            emoji: '🌸',
+            difficulty: 'Средняя',
+            wick: 'Нет',
+            family: 'Apocynaceae. Суккулентные эпифиты. Родина — Азия, Австралия.',
+            toxicity: 'Слабая. Млечный сок может раздражать кожу. Держать от животных.',
+            temp: 'Оптимум 20–26°C. Прохладная зимовка 15–18°C стимулирует цветение.',
+            humidity: '50–65%. Терпит сухость лучше других ароидных.',
+            light: '300–600 мкмоль/м²/с. Любят яркий рассеянный свет. 14–16 ч/день.',
+            substrate: 'Кокос 50% + перлит 40% + вермикулит 10%. Очень лёгкий, дренажный.',
+            repot: 'Редко — раз в 2–3 года. Тесный горшок = лучшее цветение.',
+            feature: 'Педункул не обрезать НИКОГДА — он даёт цветы снова и снова.',
+            flowering: 'Шаровидные зонтики цветков с ароматом. Часто ночной.',
+            tip: 'Хойи — долгожители. Правильный уход = десятилетия украшения интерьера.',
+            stages: [
+                { name: 'Черенок (0–4 нед)', ec: 0.3, ppm: 150, ph: '6.0–6.5', cocoA: 0.3, cocoB: 0.3, calmag: 0.3,
+                    radifarm: 1, freq: 'Лёгкое увлажнение, 40–50%',
+                    note: 'Черенок в перлите или мхе. Нельзя переувлажнять. Фитиль — риск.' },
+                { name: 'Молодое (1–6 мес)', ec: 0.6, ppm: 300, ph: '6.0–6.5', cocoA: 0.8, cocoB: 0.8, calmag: 0.5,
+                    radifarm: 0.5, freq: 'Раз в 5–7 дней, 35–45%', note: 'Медленный рост — не перекармливать.' },
+                { name: 'Активный рост (6–18 мес)', ec: 0.9, ppm: 450, ph: '6.0–6.5', cocoA: 1.2, cocoB: 1.2,
+                    calmag: 0.7, radifarm: 0, freq: 'Раз в 7–10 дней, 30–40%',
+                    note: 'Меньше воды — больше цветов. EC умеренный.' },
+                { name: 'Взрослое/цветение (18+ мес)', ec: 1, ppm: 500, ph: '6.0–6.5', cocoA: 1.5, cocoB: 1.5,
+                    calmag: 0.7, radifarm: 0, freq: 'Раз в 10–14 дней, 25–35%',
+                    note: 'При цветении НЕ трогать педункул. Сухость стимулирует цвет.' },
+            ],
+            problems: [
+                { issue: 'Не цветёт',
+                    solution: 'Слишком много воды/N, мало света или не трогали педункул. Сухость + больше света.' },
+                { issue: 'Опадание листьев',
+                    solution: 'Холодный сквозняк или резкая смена условий. Стабильность температуры.' },
+                { issue: 'Мучнистый червец — самый частый вредитель!',
+                    solution: 'Осматривать под листьями и в пазухах. Актара ×3 + спирт.' },
+            ],
+            tips: [
+                'НИКОГДА не обрезать и не трогать педункул (цветоножку) — цветы появятся снова!',
+                'Стресс сухостью (3–4 нед без полива) = стимул к цветению у взрослых хой.',
+                'Черенок с 2 парами листьев + подсушить 1 ч + в перлит с Радифармом.',
+                'PPFD 300–500 мкмоль + 14–16 ч/день = быстрый рост и цветение.',
+            ],
+        }, {
+            id: 'monstera',
+            name: 'Монстера',
+            emoji: '🌴',
+            difficulty: 'Средняя',
+            wick: 'Частично',
+            family: 'Araceae. Лазающие эпифиты. Родина — тропики Центр. и Южн. Америки.',
+            toxicity: 'Умеренная. Оксалат кальция. Перчатки при обрезке.',
+            temp: 'Оптимум 20–27°C. Мин. 16°C.',
+            humidity: '60–80%. Оптимум 70%+.',
+            light: '200–400 мкмоль/м²/с. Яркий рассеянный свет. 12–16 ч/день.',
+            substrate: 'Кокос + 20–30% перлита + 10% сфагнума. Для крупных — добавить биогумус.',
+            repot: 'Раз в 1.5–2 года. Горшок +5–7 см при каждой пересадке.',
+            feature: 'Фенестрация (отверстия) появляется только при хорошем освещении.',
+            flowering: '—',
+            tip: 'Воздушные корни — питательный канал. Направляйте в мох-опору или субстрат.',
+            stages: [
+                { name: 'Черенок/воздушный корень (0–4 нед)', ec: 0.4, ppm: 200, ph: '5.8–6.3', cocoA: 0.5,
+                    cocoB: 0.5, calmag: 0.5, radifarm: 1, freq: 'Влажный кокос 60–70%',
+                    note: 'Узел с воздушным корнем. Фитиль ускоряет укоренение.' },
+                { name: 'Молодое (1–6 мес)', ec: 0.8, ppm: 400, ph: '5.8–6.3', cocoA: 1, cocoB: 1, calmag: 0.8,
+                    radifarm: 0.5, freq: 'Раз в 4–5 дней, 55–65%',
+                    note: 'Опора с первого листа — формирует более крупные листья.' },
+                { name: 'Активный рост (6–24 мес)', ec: 1.3, ppm: 650, ph: '5.8–6.3', cocoA: 2, cocoB: 2,
+                    calmag: 1, radifarm: 0.3, freq: 'Раз в 5–7 дней, 50–60%',
+                    note: 'Промывка субстрата раз в 3–4 нед. EC до 1.6 для крупных.' },
+                { name: 'Взрослое (24+ мес)', ec: 1.6, ppm: 800, ph: '5.8–6.3', cocoA: 2.5, cocoB: 2.5,
+                    calmag: 1.2, radifarm: 0, freq: 'Раз в 7–10 дней, 45–55%',
+                    note: 'Крупным монстерам нужен горшок 30+ л. Фитиль не справится.' },
+            ],
+            problems: [
+                { issue: 'Нет фенестрации (перфорации)',
+                    solution: 'Мало света или растение молодое (<5 листьев). Добавить свет, опору.' },
+                { issue: 'Жёлтые листья', solution: 'Перелив — самая частая причина. Дать просохнуть 50%.' },
+                { issue: 'Плачет (гуттация)',
+                    solution: 'Норма при высокой влажности. Убрать капли с листьев.' },
+            ],
+            tips: [
+                'Опора с мхом кокопит, которую регулярно увлажняют — листья вырастают вдвое крупнее.',
+                'Воздушные корни направлять в субстрат или в стакан с водой — питают растение.',
+                'Промывка субстрата каждые 3–4 нед обязательна при EC 1.3+.',
+                'PPFD 200–400 мкмоль, 14–16 ч = максимальная фенестрация.',
+            ],
+        }, {
+            id: 'caladium',
+            name: 'Каладиум',
+            emoji: '🎨',
+            difficulty: 'Выше средней',
+            wick: 'Нет',
+            family: 'Araceae. Клубневые. Родина — Южная Америка (тропики).',
+            toxicity: 'Высокая. Все части. Особенно опасны для кошек. Перчатки.',
+            temp: 'Вегетация 24–30°C. Покой 15–18°C. Холод — смерть клубня.',
+            humidity: '65–80% при активном росте. Без этого — деформация листьев.',
+            light: '100–200 мкмоль/м²/с. Очень чувствительны к прямому солнцу.',
+            substrate: 'Лёгкий дренажный. Кокос + 30% перлита. Без застоя воды.',
+            repot: 'Ежегодно весной. При пробуждении клубня.',
+            feature: 'Обязательный период покоя 3–4 мес. Без покоя клубень истощается.',
+            flowering: '—',
+            tip: 'Не путать с колоказией (Colocasia) — другой род, более влаголюбивый.',
+            stages: [
+                { name: 'Клубень (пробуждение, 0–3 нед)', ec: 0.3, ppm: 150, ph: '6.0–6.5', cocoA: 0.3, cocoB: 0.3,
+                    calmag: 0.5, radifarm: 1, freq: 'Слегка влажный, 50–60%. НЕ мокрый!',
+                    note: 'Клубень посадить выпуклостью вверх, 2–3 см. Тепло 26–28°C. Без корней — без фитиля!' },
+                { name: 'Всходы/1–3 листа (1–2 мес)', ec: 0.6, ppm: 300, ph: '6.0–6.5', cocoA: 0.8, cocoB: 0.8,
+                    calmag: 0.7, radifarm: 0.7, freq: 'Раз в 2–3 дня, 60–70%',
+                    note: 'Свет умеренный — яркий выжигает. Влажность воздуха 60%+.' },
+                { name: 'Активный рост (2–5 мес)', ec: 1, ppm: 500, ph: '6.0–6.5', cocoA: 1.2, cocoB: 1.2,
+                    calmag: 0.8, radifarm: 0.3, freq: 'Раз в 2–4 дня, 55–65%',
+                    note: 'Ярко выражена сезонность — летом пик роста.' },
+                { name: 'Покой (осень–зима)', ec: 0, ppm: 0, ph: '—', cocoA: 0, cocoB: 0, calmag: 0, radifarm: 0,
+                    freq: 'Не поливать! Клубень хранить сухим.',
+                    note: 'Листья жёлтеют — это нормально. Обрезать и убрать в тёмное место 15–18°C до весны.' },
+            ],
+            problems: [
+                { issue: 'Листья желтеют до покоя',
+                    solution: 'Преждевременный покой от холода или пересыхания. Тепло + полив.' },
+                { issue: 'Гниль клубня', solution: 'Переувлажнение. Пересадить, обработать фунгицидом.' },
+                { issue: 'Обгоревшие листья',
+                    solution: 'Прямой свет. Рассеянный яркий свет. Чувствительны к солнцу.' },
+            ],
+            tips: [
+                'Тепло — главный фактор! <22°C = медленный рост. <18°C = не проснётся.',
+                'Клубень посадить выпуклостью вверх. Заглубить на 2–3 см.',
+                'При пробуждении — стакан перлит/вермикулит. Почти без воды.',
+                'Досветка 16 ч/день при умеренном PPFD (100–200) = крупные листья без ожогов.',
+            ],
+        }];
+
+        // ==================== STATE ====================
+        let currentPage = 'home';
+        let currentPlantId = null;
+        let searchTimeout = null;
+
+        // ==================== DOM REFS ====================
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const menuToggle = document.getElementById('menuToggle');
+        const mainContent = document.getElementById('mainContent');
+        const searchInput = document.getElementById('searchInput');
+        const searchDropdown = document.getElementById('searchDropdown');
+        const scrollTopBtn = document.getElementById('scrollTop');
+        const plantNav = document.getElementById('plantNav');
+        const plantCardsGrid = document.getElementById('plantCardsGrid');
+        const plantPagesContainer = document.getElementById('plantPagesContainer');
+        const calcPlant = document.getElementById('calcPlant');
+        const calcStage = document.getElementById('calcStage');
+        const calcSourcePPM = document.getElementById('calcSourcePPM');
+        const calcTargetPPM = document.getElementById('calcTargetPPM');
+        const calcVolume = document.getElementById('calcVolume');
+        const calcPH = document.getElementById('calcPH');
+        const calcResults = document.getElementById('calcResults');
+        const calcEmpty = document.getElementById('calcEmpty');
+        const calcDosages = document.getElementById('calcDosages');
+        const calcVolDisplay = document.getElementById('calcVolDisplay');
+        const mixingSteps = document.getElementById('mixingSteps');
+
+        // ==================== INIT ====================
+        function init() {
+            buildPlantNav();
+            buildPlantCards();
+            buildPlantPages();
+            populateCalcPlantSelect();
+            setupEventListeners();
+            navigateTo('home');
+        }
+
+        function buildPlantNav() {
+            plantNav.innerHTML = plantsData.map(p =>
+                `<li><a onclick="navigateTo('plant-${p.id}')" data-page="plant-${p.id}">
+              <span class="emoji">${p.emoji}</span> ${p.name}
+            </a></li>`
+            ).join('');
+        }
+
+        function buildPlantCards() {
+            plantCardsGrid.innerHTML = plantsData.map(p => `
+            <div class="quick-ref-card" onclick="navigateTo('plant-${p.id}')">
+              <div class="plant-emoji">${p.emoji}</div>
+              <h3>${p.name}</h3>
+              <p>Сложность: ${p.difficulty} • Фитиль: ${p.wick}</p>
+            </div>
+          `).join('');
+        }
+
+        function buildPlantPages() {
+            plantPagesContainer.innerHTML = plantsData.map(p => {
+                const stagesRows = p.stages.map((s, i) => `
+              <tr>
+                <td><span class="badge badge-${['blue','green','accent','orange'][i] || 'blue'}">Этап ${i+1}</span> ${s.name}</td>
+                <td>${s.ec}</td><td>${s.ppm}</td><td>${s.ph}</td>
+                <td>${s.cocoA}</td><td>${s.cocoB}</td><td>${s.calmag}</td><td>${s.radifarm}</td>
+                <td>${s.freq}</td><td>${s.note}</td>
+              </tr>`).join('');
+
+                const problemsRows = p.problems.map(pr => `
+              <tr><td>${pr.issue}</td><td>${pr.solution}</td></tr>`).join('');
+
+                const tipsList = p.tips.map(t => `<li>${t}</li>`).join('');
+
+                return `
+            <div class="page" id="page-plant-${p.id}">
+              <div class="card">
+                <div class="card-header">${p.emoji} ${p.name} — Руководство по уходу</div>
+                <p>
+                  <span class="badge badge-accent">Сложность: ${p.difficulty}</span>
+                  <span class="badge badge-${p.wick.includes('Да')?'green':'orange'}">Фитиль: ${p.wick}</span>
+                </p>
+              </div>
+
+              <div class="card">
+                <div class="card-header">📊 Дозировки и параметры по этапам развития</div>
+                <div class="table-wrap">
+                  <table>
+                    <thead><tr><th>Этап развития</th><th>EC</th><th>PPM</th><th>pH</th><th>Coco A</th><th>Coco B</th><th>CalMag</th><th>Radifarm</th><th>Полив</th><th>Примечания</th></tr></thead>
+                    <tbody>${stagesRows}</tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">⚠️ Проблемы и решения</div>
+                <div class="table-wrap">
+                  <table><thead><tr><th>Проблема</th><th>Решение</th></tr></thead><tbody>${problemsRows}</tbody></table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header">💡 Лайфхаки</div>
+                <ul style="padding-left:20px;">${tipsList}</ul>
+              </div>
+
+              <div class="card">
+                <div class="card-header">📝 Особенности растения</div>
+                <table style="min-width:auto;">
+                  <tbody>
+                    <tr><td><strong>Семейство</strong></td><td>${p.family}</td></tr>
+                    <tr><td><strong>Токсичность</strong></td><td>${p.toxicity}</td></tr>
+                    <tr><td><strong>Температура</strong></td><td>${p.temp}</td></tr>
+                    <tr><td><strong>Влажность</strong></td><td>${p.humidity}</td></tr>
+                    <tr><td><strong>Свет (PPFD)</strong></td><td>${p.light}</td></tr>
+                    <tr><td><strong>Субстрат</strong></td><td>${p.substrate}</td></tr>
+                    <tr><td><strong>Пересадка</strong></td><td>${p.repot}</td></tr>
+                    <tr><td><strong>Особенность</strong></td><td>${p.feature}</td></tr>
+                    ${p.flowering !== '—' ? `<tr><td><strong>Цветение</strong></td><td>${p.flowering}</td></tr>` : ''}
+                    <tr><td><strong>Совет</strong></td><td>${p.tip}</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>`;
+            }).join('');
+        }
+
+        function populateCalcPlantSelect() {
+            calcPlant.innerHTML = '<option value="">-- Выберите растение --</option>' +
+                plantsData.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join('');
+        }
+
+        function setupEventListeners() {
+            menuToggle.addEventListener('click', toggleSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+            searchInput.addEventListener('input', handleSearch);
+            searchInput.addEventListener('focus', handleSearch);
+            document.addEventListener('click', (e) => {
+                if (!searchDropdown.contains(e.target) && e.target !== searchInput) {
+                    searchDropdown.classList.remove('active');
+                }
+            });
+            window.addEventListener('scroll', handleScroll);
+            scrollTopBtn.addEventListener('click', () => {
+                mainContent.scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            // Close sidebar on nav click (mobile)
+            document.querySelectorAll('.sidebar-nav a').forEach(a => {
+                a.addEventListener('click', () => {
+                    if (window.innerWidth <= 900) closeSidebar();
+                });
+            });
+        }
+
+        function toggleSidebar() {
+            const isOpen = sidebar.classList.contains('open');
+            if (isOpen) {
+                closeSidebar();
+            } else {
+                sidebar.classList.add('open');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleScroll() {
+            if (mainContent.scrollTop > 400 || window.scrollY > 400) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }
+
+        // ==================== NAVIGATION ====================
+        function navigateTo(pageId) {
+            currentPage = pageId;
+            // Deactivate all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Activate target
+            const targetPage = document.getElementById('page-' + pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            // Update sidebar active
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+            const activeLink = document.querySelector(`.sidebar-nav a[data-page="${pageId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            // Scroll to top
+            mainContent.scrollTop = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Close mobile sidebar
+            if (window.innerWidth <= 900) closeSidebar();
+            // Clear search
+            searchDropdown.classList.remove('active');
+        }
+
+        // ==================== SEARCH ====================
+        function buildSearchIndex() {
+            const index = [];
+            // Plants
+            plantsData.forEach(p => {
+                index.push({ type: 'plant', id: p.id, title: p.emoji + ' ' + p.name, subtitle: 'Растение • Сложность: ' +
+                        p.difficulty, keywords: p.name + ' ' + p.family + ' ' + p.feature + ' ' + p.tip, pageId: 'plant-' +
+                        p.id });
+                p.stages.forEach((s, i) => {
+                    index.push({ type: 'stage', id: p.id + '-stage-' + i, title: p.emoji + ' ' + p.name + ' — ' + s
+                            .name, subtitle: 'PPM: ' + s.ppm + ' • EC: ' + s.ec + ' • pH: ' + s.ph,
+                        keywords: s.name + ' ' + s.note + ' ' + s.freq, pageId: 'plant-' + p.id });
+                });
+                p.problems.forEach(pr => {
+                    index.push({ type: 'problem', id: p.id + '-prob-' + pr.issue.slice(0, 20),
+                        title: '⚠️ ' + p.name + ': ' + pr.issue, subtitle: pr.solution.slice(0, 80) + '…',
+                        keywords: pr.issue + ' ' + pr.solution, pageId: 'plant-' + p.id });
+                });
+                p.tips.forEach(t => {
+                    index.push({ type: 'tip', id: p.id + '-tip-' + t.slice(0, 20), title: '💡 ' + p.name + ': ' + t
+                            .slice(0, 60), subtitle: t, keywords: t, pageId: 'plant-' + p.id });
+                });
+            });
+            // Quick ref
+            index.push({ type: 'page', id: 'quickref', title: '💊 Быстрый справочник PPM и pH',
+                subtitle: 'Ориентиры PPM и pH для дистиллята по этапам', keywords: 'ppm ph ec дистиллят справочник',
+                pageId: 'quickref' });
+            index.push({ type: 'page', id: 'calculator', title: '🧪 Калькулятор раствора',
+                subtitle: 'Расчёт дозировок удобрений', keywords: 'калькулятор дозировка удобрение расчёт',
+                pageId: 'calculator' });
+            return index;
+        }
+
+        const searchIndex = buildSearchIndex();
+
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            const query = searchInput.value.trim().toLowerCase();
+            if (query.length < 1) {
+                searchDropdown.classList.remove('active');
+                return;
+            }
+            searchTimeout = setTimeout(() => {
+                const results = searchIndex.filter(item => {
+                    const haystack = (item.title + ' ' + item.subtitle + ' ' + item.keywords)
+                        .toLowerCase();
+                    return haystack.includes(query);
+                }).slice(0, 15);
+                renderSearchResults(results, query);
+            }, 150);
+        }
+
+        function renderSearchResults(results, query) {
+            if (results.length === 0) {
+                searchDropdown.innerHTML = '<div class="no-results">Ничего не найдено по запросу «' + escapeHTML(
+                    query) + '»</div>';
+            } else {
+                searchDropdown.innerHTML = results.map(r => `
+              <div class="search-result-item" onclick="navigateTo('${r.pageId}');searchInput.value='';searchDropdown.classList.remove('active');">
+                <div>${highlightMatch(r.title, query)}</div>
+                <div class="subtitle">${highlightMatch(r.subtitle, query)}</div>
+              </div>
+            `).join('');
+            }
+            searchDropdown.classList.add('active');
+        }
+
+        function highlightMatch(text, query) {
+            const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`(${escaped})`, 'gi');
+            return text.replace(regex, '<span class="highlight">$1</span>');
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // ==================== CALCULATOR ====================
+        function updateCalcStages() {
+            const plantId = calcPlant.value;
+            calcStage.innerHTML = '<option value="">-- Выберите этап --</option>';
+            calcResults.style.display = 'none';
+            calcEmpty.style.display = 'block';
+            calcPH.value = '—';
+            calcTargetPPM.value = '0';
+
+            if (!plantId) return;
+
+            const plant = plantsData.find(p => p.id === plantId);
+            if (!plant) return;
+
+            calcStage.innerHTML += plant.stages.map((s, i) =>
+                `<option value="${i}" data-ppm="${s.ppm}" data-ph="${s.ph}" data-ec="${s.ec}" 
+              data-cocoa="${s.cocoA}" data-cocob="${s.cocoB}" data-calmag="${s.calmag}" 
+              data-radifarm="${s.radifarm}" data-note="${escapeHTML(s.note)}" data-name="${escapeHTML(s.name)}">
+              ${s.name} (PPM: ${s.ppm}, pH: ${s.ph})
+            </option>`
+            ).join('');
+        }
+
+        function updateCalcValues() {
+            const selectedOption = calcStage.selectedOptions[0];
+            if (!selectedOption || !calcStage.value && calcStage.value !== '0') {
+                calcResults.style.display = 'none';
+                calcEmpty.style.display = 'block';
+                calcPH.value = '—';
+                return;
+            }
+
+            const ppm = parseInt(selectedOption.dataset.ppm) || 0;
+            const ph = selectedOption.dataset.ph || '—';
+            const ec = selectedOption.dataset.ec || '0';
+            const cocoA = parseFloat(selectedOption.dataset.cocoa) || 0;
+            const cocoB = parseFloat(selectedOption.dataset.cocob) || 0;
+            const calmag = parseFloat(selectedOption.dataset.calmag) || 0;
+            const radifarm = parseFloat(selectedOption.dataset.radifarm) || 0;
+            const stageName = selectedOption.dataset.name || '';
+            const note = selectedOption.dataset.note || '';
+
+            calcTargetPPM.value = ppm;
+            calcPH.value = ph;
+
+            const sourcePPM = parseInt(calcSourcePPM.value) || 0;
+            const targetPPM = parseInt(calcTargetPPM.value) || ppm;
+            const volume = parseFloat(calcVolume.value) || 1;
+
+            // Calculate scaling factor based on PPM difference
+            const neededPPM = Math.max(0, targetPPM - sourcePPM);
+            const basePPM = ppm;
+            let scaleFactor = basePPM > 0 ? neededPPM / basePPM : 0;
+            if (scaleFactor < 0) scaleFactor = 0;
+            if (scaleFactor > 3) scaleFactor = 3; // safety cap
+
+            const totalCocoA = (cocoA * scaleFactor * volume);
+            const totalCocoB = (cocoB * scaleFactor * volume);
+            const totalCalmag = (calmag * scaleFactor * volume);
+            const totalRadifarm = (radifarm * scaleFactor * volume);
+            const totalFulvic = (0.75 * scaleFactor * volume); // mid-range 0.5-1 ml/L
+            const totalHB101 = (1.5 * scaleFactor * volume); // mid-range 1-2 drops/L, in drops
+
+            calcVolDisplay.textContent = volume;
+            calcDosages.innerHTML = `
+            <div class="result-item"><span>💧 Дистиллят (основа)</span><span class="val">${(volume*1000).toFixed(0)} мл</span></div>
+            <div class="result-item"><span>🔬 Fulvic Plantix (0.5–1 мл/л)</span><span class="val">${totalFulvic.toFixed(2)} мл</span></div>
+            <div class="result-item"><span>🌲 HB-101 (1–2 капли/л)</span><span class="val">${Math.round(totalHB101)} капель</span></div>
+            <div class="result-item"><span>🧪 Coco A (Plagron)</span><span class="val">${totalCocoA.toFixed(2)} мл</span></div>
+            <div class="result-item"><span>🧪 Coco B (Plagron)</span><span class="val">${totalCocoB.toFixed(2)} мл</span></div>
+            <div class="result-item"><span>🧂 CalMag Simplex</span><span class="val">${totalCalmag.toFixed(2)} мл</span></div>
+            ${totalRadifarm > 0 ? `<div class="result-item"><span>🌱 Радифарм</span><span class="val">${totalRadifarm.toFixed(2)} мл</span></div>` : ''}
+            <div class="result-item"><span>⚖️ pH-корректор</span><span class="val">по необходимости</span></div>
+            <div class="result-item" style="font-weight:700;color:var(--primary-dark);">
+              <span>🎯 Итоговый ориентировочный PPM</span><span class="val">~${targetPPM} ppm</span>
+            </div>
+            <div class="result-item"><span>📊 EC ориентировочный</span><span class="val">${ec} мСм/см</span></div>
+          `;
+
+            mixingSteps.innerHTML = `
+            <li>Налейте <strong>${(volume*1000).toFixed(0)} мл</strong> дистиллированной воды (исходный PPM: ${sourcePPM}) в чистую ёмкость.</li>
+            <li>Добавьте <strong>${totalFulvic.toFixed(2)} мл</strong> Fulvic Plantix. Перемешайте.</li>
+            <li>Добавьте <strong>${Math.round(totalHB101)} капель</strong> HB-101. Перемешайте.</li>
+            <li>Добавьте <strong>${totalCocoA.toFixed(2)} мл</strong> Coco A (Plagron). Тщательно перемешайте.</li>
+            <li>Добавьте <strong>${totalCocoB.toFixed(2)} мл</strong> Coco B (Plagron). <em>Никогда не смешивайте A и B напрямую!</em> Перемешайте.</li>
+            <li>Добавьте <strong>${totalCalmag.toFixed(2)} мл</strong> CalMag Simplex. Перемешайте.</li>
+            ${totalRadifarm > 0 ? `<li>Добавьте <strong>${totalRadifarm.toFixed(2)} мл</strong> Радифарм. Перемешайте.</li>` : ''}
+            <li>Проверьте pH раствора. При необходимости доведите до <strong>${ph}</strong> с помощью pH-корректора.</li>
+            <li>✅ Раствор готов к использованию! <em>${note}</em></li>
+          `;
+
+            calcResults.style.display = 'block';
+            calcEmpty.style.display = 'none';
+        }
+
+        // ==================== INIT ====================
+        init();
+
+        // Handle initial hash navigation
+        if (window.location.hash) {
+            const hashPage = window.location.hash.replace('#', '');
+            if (hashPage) navigateTo(hashPage);
+        }
+
+        // Update hash on navigation
+        const originalNavigateTo = navigateTo;
+        navigateTo = function(pageId) {
+            originalNavigateTo(pageId);
+            if (history.pushState) {
+                history.pushState(null, null, '#' + pageId);
+            }
+        };
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && document.getElementById('page-' + hash)) {
+                originalNavigateTo(hash);
+            }
+        });
+
+        console.log('🌿 Справочник цветовода готов к работе!');
+        console.log('📱 Адаптивный дизайн: смартфон → планшет → компьютер');
+        console.log('🔍 Поиск по всем растениям, проблемам и советам');
+        console.log('🧪 Калькулятор раствора с динамическим подбором дозировок');
+        console.log('💡 Выберите растение в боковом меню или на главной странице');
+    </script>
+</body>
+</html>
