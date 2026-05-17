@@ -430,7 +430,7 @@
               <option value="0">Этап 1 — Черенок/проращивание/клубень</option>
               <option value="1">Этап 2 — Молодое растение (1–4 мес)</option>
               <option value="2">Этап 3 — Активный рост</option>
-              <option value="3">Этап 4 — Взрослое/цветение</option>
+              <option value="3">Этап 4 — Взрослое/цветение (покой для каладиума)</option>
             </select>
           </div>
           <div class="form-group">
@@ -458,6 +458,13 @@
           Шаг 2 — Препараты
           <span style="font-weight:400;text-transform:none;font-size:0.78rem;color:var(--text-muted);margin-left:6px;">✅ = рекомендовано для выбранного этапа · снимите галочку чтобы исключить</span>
         </div>
+
+        <!-- Leaf treatment toggle -->
+        <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:0.85rem;cursor:pointer;user-select:none;">
+          <input type="checkbox" id="leafTreatmentToggle" onchange="onLeafTreatmentToggle()"> 🌿 Обработка по листу
+          <span style="font-size:0.75rem;color:var(--text-muted);">(Мегафол, Супераминовит и др.)</span>
+        </label>
+
         <div class="fert-checkboxes" id="fertCheckboxes"></div>
         <div id="compatWarningInline" style="display:none;" class="alert-warning"></div>
 
@@ -467,9 +474,10 @@
               <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--primary-dark);margin-bottom:8px;padding:6px 10px;background:var(--primary-light);border-radius:var(--radius-sm);">🪴 Корневой полив · <span id="calcVolDisplay">1</span> л</div>
               <div class="result-box" style="background:#fff;" id="calcDosagesRoot"></div>
             </div>
-            <div>
+            <div id="calcLeafBlock">
               <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#2572a8;margin-bottom:8px;padding:6px 10px;background:#eaf4fb;border-radius:var(--radius-sm);">🌿 Листовая обработка · <span class="calcVolLeaf">1</span> л</div>
               <div class="result-box" style="background:#fff;" id="calcDosagesLeaf"></div>
+              <div id="leafCompatNote" style="margin-top:8px;"></div>
             </div>
           </div>
           <div style="margin-top:10px; display:flex; gap:10px;">
@@ -1137,9 +1145,11 @@ function buildCalcPlantCheckboxes() {
 
 function buildFertCheckboxes() {
   const container = document.getElementById('fertCheckboxes');
+  const showLeaf = document.getElementById('leafTreatmentToggle').checked;
   container.innerHTML = FERTS.map(f => {
     const isLeaf = f.leafOnly;
-    return `<label class="fert-checkbox-label${f.optional?' optional-label':''}" id="flabel-${f.id}" title="${isLeaf?'Листовая обработка':'Корневой полив'}">
+    const displayStyle = (isLeaf && !showLeaf) ? 'display:none;' : '';
+    return `<label class="fert-checkbox-label${f.optional?' optional-label':''}" id="flabel-${f.id}" title="${isLeaf?'Листовая обработка':'Корневой полив'}" style="${displayStyle}">
       <input type="checkbox" id="chk-${f.id}" onchange="onFertChange('${f.id}')">
       ${f.name}
       ${f.optional?'<span class="optional-marker">опц.</span>':''}
@@ -1148,22 +1158,58 @@ function buildFertCheckboxes() {
   }).join('');
 }
 
+function onLeafTreatmentToggle() {
+  const showLeaf = document.getElementById('leafTreatmentToggle').checked;
+  // Show/hide leafOnly labels
+  FERTS.forEach(f => {
+    if (f.leafOnly) {
+      const lbl = document.getElementById('flabel-'+f.id);
+      if (lbl) lbl.style.display = showLeaf ? '' : 'none';
+    }
+  });
+  if (!showLeaf) {
+    // Uncheck all leafOnly
+    FERTS.filter(f=>f.leafOnly).forEach(f => {
+      const cb = document.getElementById('chk-'+f.id);
+      if (cb) cb.checked = false;
+    });
+  }
+  onFertChange();
+}
+
 function onPlantChange() {
   const plantIds = getSelectedPlants();
   const stageKey = document.getElementById('calcStageKey').value;
-  if (stageKey && plantIds.length) setMandatoryFerts(stageKey, plantIds);
+  if (stageKey && plantIds.length) {
+    setMandatoryFerts(stageKey, plantIds);
+    autoSetLeafTreatment(stageKey, plantIds);
+  }
   calcUpdate();
 }
 
 function onStageChange() {
   const plantIds = getSelectedPlants();
   const stageKey = document.getElementById('calcStageKey').value;
-  if (stageKey && plantIds.length) setMandatoryFerts(stageKey, plantIds);
+  if (stageKey && plantIds.length) {
+    setMandatoryFerts(stageKey, plantIds);
+    autoSetLeafTreatment(stageKey, plantIds);
+  }
   calcUpdate();
 }
 
+function autoSetLeafTreatment(stageKey, plantIds) {
+  const mandatory = STAGE_MANDATORY[stageKey] || [];
+  const optional = STAGE_OPTIONAL[stageKey] || [];
+  const allRec = [...mandatory, ...optional];
+  const leafFerts = FERTS.filter(f => f.leafOnly).map(f => f.id);
+  const needLeaf = leafFerts.some(id => allRec.includes(id));
+  const toggle = document.getElementById('leafTreatmentToggle');
+  toggle.checked = needLeaf;
+  // trigger visibility update
+  onLeafTreatmentToggle();
+}
+
 function onFertChange(id) {
-  // When user manually toggles a fert, just recalculate without resetting
   checkCompatibility();
   calcUpdateDosesOnly();
 }
@@ -1329,8 +1375,10 @@ function calcUpdate() {
 
   const srcPPM = parseInt(document.getElementById('calcSrcPPM').value)||0;
   const userTgt = document.getElementById('calcTgtPPM').value;
+  // Always reset target PPM when plants/stage change
+  document.getElementById('calcTgtPPM').value = '';
   const tgtPPM = userTgt ? parseInt(userTgt) : s.ppm;
-  if (!userTgt) document.getElementById('calcTgtPPM').value = s.ppm;
+  document.getElementById('calcTgtPPM').value = s.ppm;
   document.getElementById('calcPH').value = s.ph;
 
   const vol = parseFloat(document.getElementById('calcVol').value)||1;
@@ -1349,17 +1397,16 @@ function calcUpdate() {
       : [MERISTEM_STAGE.ppm];
     const minP = Math.min(...stagePPMs);
     const maxP = Math.max(...stagePPMs);
+    const diffNote = (maxP - minP) > 150 ? `<br><span style="color:var(--danger);font-size:0.8rem;">⚠️ Разброс целевых PPM значительный (мин ${minP}, макс ${maxP}). Рекомендуется готовить отдельные растворы для этих растений.</span>` : '';
     const carnNote = hasCarnivore ? `<br><span style="color:var(--danger);font-size:0.8rem;">⚠ Хищники исключены из расчёта — для них готовится отдельный дистиллят.</span>` : '';
     groupEl.innerHTML = `<div style="background:var(--accent-light);border:1px solid #e8c88a;border-radius:var(--radius);padding:10px 14px;font-size:0.85rem;">
       <strong>🌿 Групповой раствор для ${calcPlantIds.length} растений:</strong> ${names.join(', ')}<br>
       <span style="color:var(--text-muted);font-size:0.8rem;">
         PPM по группе: мин <strong>${minP}</strong> · макс <strong>${maxP}</strong> · используется <strong>${s.ppm}</strong> (минимальный — безопасно для всех).
         Дозы усреднены.
-      </span>${carnNote}
+      </span>${diffNote}${carnNote}
     </div>`;
     groupEl.style.display='block';
-  } else if (hasCarnivore && calcPlantIds.length === 0) {
-    // handled above
   } else {
     groupEl.style.display='none';
   }
@@ -1383,7 +1430,14 @@ function calcUpdateDosesOnly(s, scale, vol, srcPPM, tgtPPM) {
     document.querySelectorAll('.calcVolLeaf').forEach(el=>el.textContent=vol);
   }
 
-  const checked = id => document.getElementById('chk-'+id)?.checked;
+  const leafActive = document.getElementById('leafTreatmentToggle').checked;
+  const checked = id => {
+    const cb = document.getElementById('chk-'+id);
+    if (!cb) return false;
+    const fert = FERTS.find(f=>f.id===id);
+    if (fert && fert.leafOnly && !leafActive) return false;
+    return cb.checked;
+  };
 
   const rootDoses = [
     {id:'calmag',   label:'1. CalMag',     val:checked('calmag')  ? (s.calmag*scale*vol).toFixed(2) +' мл' : null},
@@ -1397,12 +1451,12 @@ function calcUpdateDosesOnly(s, scale, vol, srcPPM, tgtPPM) {
     {id:'previcur', label:'Превикур ⚠',    val:checked('previcur') ? (3*vol).toFixed(1)+' мл' : null, opt:true, warn:'Отдельным поливом! +2–3 дня'},
   ].filter(d=>d.val);
 
-  const leafDoses = [
+  const leafDoses = leafActive ? [
     {id:'megafol',  label:'Мегафол',         val:checked('megafol') &&s.megafol>0 ? (s.megafol*vol).toFixed(2)+' мл' : null, freq:'раз в 10 дней'},
     {id:'aminovit', label:'Супераминовит',    val:checked('aminovit') ? 'по инструкции' : null, freq:'раз в 10 дней (чередовать)'},
     {id:'nitrozyme',label:'Нитрозим (доп.)',  val:checked('nitrozyme')&&s.nitrozyme>0 ? (s.nitrozyme*vol*0.8).toFixed(2)+' мл' : null, freq:'раз в 2 нед'},
     {id:'hb101',    label:'HB-101 (доп.)',    val:checked('hb101') ? Math.round(2*vol)+' кап' : null, freq:'раз в 2 нед'},
-  ].filter(d=>d.val);
+  ].filter(d=>d.val) : [];
 
   const renderDoseRow = (d) =>
     `<div class="result-item" style="${d.opt?'opacity:0.85;background:#faf7ff;border-radius:4px;padding:5px 6px;':''}">
@@ -1420,6 +1474,20 @@ function calcUpdateDosesOnly(s, scale, vol, srcPPM, tgtPPM) {
   document.getElementById('calcDosagesLeaf').innerHTML = leafDoses.length
     ? leafDoses.map(renderDoseRow).join('') + `<div style="border-top:1px solid var(--border);margin-top:8px;padding-top:8px;font-size:0.8rem;color:var(--text-muted);">Разводить в чистой воде · EC листового ~0.3–0.5</div>`
     : '<div style="color:var(--text-muted);padding:10px;font-size:0.85rem;">Листовые препараты не выбраны</div>';
+
+  // Leaf compatibility notes
+  const leafCompatDiv = document.getElementById('leafCompatNote');
+  if (leafActive && leafDoses.length > 0) {
+    const leafChecked = leafDoses.map(d=>d.id);
+    const leafConflicts = COMPAT_RULES.filter(r => r.ids.every(id => leafChecked.includes(id)) && r.severity !== 'info');
+    if (leafConflicts.length) {
+      leafCompatDiv.innerHTML = `<div class="alert-warning" style="margin-top:6px;">${leafConflicts.map(c=>`⚠️ ${c.risk}`).join('<br>')}</div>`;
+    } else {
+      leafCompatDiv.innerHTML = '';
+    }
+  } else {
+    leafCompatDiv.innerHTML = '';
+  }
 
   const steps = [];
   let runPPM = srcPPM;
@@ -1483,7 +1551,6 @@ function exportCalcToLog() {
   const ferts = FERTS.filter(f => document.getElementById('chk-'+f.id)?.checked).map(f=>f.id);
   const note = `Экспорт из калькулятора. Группа: ${plantIds.map(pid=>{const p=plantsData.find(x=>x.id===pid);return p?p.name:pid;}).join(', ')}. PPM ${tgtPPM}, pH ${ph}.`;
   const date = new Date().toISOString().slice(0,10);
-  // Add one entry for the whole group
   logEntries.unshift({ id: Date.now(), date, plant: plantIds[0], stage, ppm: tgtPPM, ph, ferts, note });
   saveLog();
   alert('Запись добавлена в журнал. Перейдите в журнал для просмотра.');
@@ -1546,14 +1613,12 @@ function deleteLogEntry(id) {
 function copyLogEntry(id) {
   const entry = logEntries.find(e=>e.id===id);
   if (!entry) return;
-  // Fill the form with entry data for editing
   document.getElementById('logDate').value = entry.date;
   document.getElementById('logPlant').value = entry.plant;
   document.getElementById('logStageSelect').value = entry.stage || '';
   document.getElementById('logPPM').value = entry.ppm || '';
   document.getElementById('logPHVal').value = entry.ph || '';
   document.getElementById('logNote').value = entry.note || '';
-  // Set fert checkboxes
   const allCheckboxes = document.querySelectorAll('#logFertCheck input');
   allCheckboxes.forEach(cb => { cb.checked = false; });
   if (entry.ferts && Array.isArray(entry.ferts)) {
@@ -1562,7 +1627,6 @@ function copyLogEntry(id) {
       if (cb) cb.checked = true;
     });
   }
-  // Scroll to form
   document.getElementById('logDate').scrollIntoView({behavior:'smooth'});
 }
 
